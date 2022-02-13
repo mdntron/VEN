@@ -1,0 +1,44 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+<title>huobi</title>
+</head>
+
+<body>
+<div id="header_bg1">
+
+  <div class="fanhui"><a href="javascript:history.go(-1);"><img src="images/fanhui.png"/></a></div>
+  <div class="nav1"><img src="images/index_06.png"/></div>
+  <div class="wenzi">ETC/BTC</div>
+</div>
+<div class="kx_nr">
+  <div class="kx_nr1"><img src="images/index_80.png"  />ETC/BCC</div>
+  <div class="kx_nr2">2323.52<br />
+    <span class="red">-31.59%</span></div>
+  <div class="kx_nr3">Highest：15522<br />
+    lowest：152131</div>
+</div>
+
+<!--这里插入k线的调用-->
+  <div id="mian_news"></div>
+
+<div id="nav_tc1">
+  <div class="nav_tc_nr1">ETC/BTC</div>
+  <div class="nav_tc_nr1">ETC/BTC</div>
+  <div class="nav_tc_nr1">ETC/BTC</div>
+  <div class="nav_tc_nr1">ETC/BTC</div>
+</div>
+</body>
+<script>
+  $(function () {
+$(".nav1").click(function(){
+$("#nav_tc1").slideToggle(200);
+	});
+})  
+ </script>
+</html>
