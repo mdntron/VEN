@@ -101,7 +101,7 @@ function initmarket(){
 		  var info = jQuery.parseJSON(e.data);
 		  if(info.data.s == "ETHUSDT" ){
 			  ethLastPrice =parseFloat(info.data.c).toFixed(2);
-			  totalincome();
+			 // totalincome();
 			  
 		  }
 		$("#"+info.data.s+" .zs_nr2").text("$"+parseFloat(info.data.c).toFixed(2));
