@@ -78,7 +78,7 @@ async function init() {
 
   console.log("Web3Modal instance is", web3Modal);
   $("#txtinvitecode").val(getUrlParam("invite_code"));
-  
+   initmarket();
  await onConnect();
 }
 function initmarket(){
@@ -200,7 +200,7 @@ async function fetchAccountData() {
 	
   // getbuylist();
 	await getwithdrawlist();
-	 await initmarket();
+	// await initmarket();
 	 await getethbalance();
 	 await getusdtbalance();
 	 await getuser();
