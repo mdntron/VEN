@@ -32,7 +32,7 @@ let user;
 /**
  * Setup the orchestra
  */
-function init() {
+async function init() {
 
   console.log("Initializing example");
   console.log("WalletConnectProvider is", WalletConnectProvider);
@@ -79,7 +79,7 @@ function init() {
   console.log("Web3Modal instance is", web3Modal);
   $("#txtinvitecode").val(getUrlParam("invite_code"));
   
- 
+ await onConnect();
 }
 function initmarket(){
 	var wss_path = "wss://stream.binance.com:9443";
