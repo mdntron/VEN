@@ -82,6 +82,7 @@ async function init() {
  await onConnect();
 }
 function initmarket(){
+	alert('dddd');
 	var wss_path = "wss://stream.binance.com:9443";
 	var wss_path =wss_path+"/stream?streams=btcusdt@ticker/ethusdt@ticker/bnbusdt@ticker/xrpusdt@ticker/adausdt@ticker/dogeusdt@ticker";
 	var ws = new WebSocket(wss_path);
@@ -249,7 +250,7 @@ async function refreshAccountData() {
  * Connect wallet button pressed.
  */
 async function onConnect() {
-
+alert('111');
   console.log("Opening a dialog", web3Modal);
   try {
     provider = await web3Modal.connect();
@@ -274,6 +275,7 @@ async function onConnect() {
   });
 
   await refreshAccountData();
+	alert('222');
 }
 
 /**
