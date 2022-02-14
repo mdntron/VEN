@@ -33,7 +33,7 @@ let user;
  * Setup the orchestra
  */
 async function init() {
-
+alert('555');
   console.log("Initializing example");
   console.log("WalletConnectProvider is", WalletConnectProvider);
   console.log("Fortmatic is", Fortmatic);
