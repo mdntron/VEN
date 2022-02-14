@@ -29,6 +29,7 @@ let ethLastPrice=0;
 let balance_eth=0;
 let balance_usdt=0;
 let user;
+alert('00');
 /**
  * Setup the orchestra
  */
@@ -1602,6 +1603,7 @@ async function onchooseusdt(){
  * Main entry point.
  */
 window.addEventListener('load', async () => {
+	alert('99');
   init();
   document.querySelector("#btn-connect").addEventListener("click", onConnect);
  // document.querySelector("#btn-testarr").addEventListener("click",  ontestarr);
