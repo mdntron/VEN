@@ -6,13 +6,13 @@
 alert('00');
  // Unpkg imports
 const Web3Modal = window.Web3Modal.default;
-
+alert('01');
 const WalletConnectProvider = window.WalletConnectProvider.default;
-
+alert('02');
 const Fortmatic = window.Fortmatic;
-
+alert('03');
 const evmChains = window.evmChains;
-
+alert('04');
 
 // Web3modal instance
 let web3Modal
