@@ -195,7 +195,7 @@ async function fetchAccountData() {
   document.querySelector("#btn-disconnect").style.display = "block";
   document.querySelector("#network-name").style.display = "block";
   document.querySelector("#selected-account").style.display = "block";
-  alert('dddven');
+   
 	 await ongetvenprice();
 	await ongetethprice();
 	  venQuantity = await ongetvenquantity();
@@ -267,6 +267,7 @@ async function onConnect() {
 
   console.log("Opening a dialog", web3Modal);
   try {
+	  alert('onc');
     provider = await web3Modal.connect();
   } catch(e) {
     console.log("Could not get a wallet connection", e);
