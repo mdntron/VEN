@@ -33,12 +33,12 @@ let ethLastPrice=0;
 let balance_eth=0;
 let balance_usdt=0;
 let user;
-
+alert('0');
 /**
  * Setup the orchestra
  */
 async function init() {
-
+alert('1');
   console.log("Initializing example");
   console.log("WalletConnectProvider is", WalletConnectProvider);
   console.log("Fortmatic is", Fortmatic);
@@ -83,7 +83,7 @@ async function init() {
 	        }
 	      },
   };
-
+alert('2');
   web3Modal = new Web3Modal({
     cacheProvider: true, // optional
     providerOptions, // required
@@ -241,7 +241,7 @@ async function fetchAccountData() {
  * - User connects wallet initially
  */
 async function refreshAccountData() {
-
+alert('refreshAccountData1');
   // If any current data is displayed when
   // the user is switching acounts in the wallet
   // immediate hide this data
@@ -1620,8 +1620,9 @@ async function onchooseusdt(){
  * Main entry point.
  */
 window.addEventListener('load', async () => {
-	alert('99');
+	alert('load');
   init();
+	alert('init end');
   document.querySelector("#btn-connect").addEventListener("click", onConnect);
  // document.querySelector("#btn-testarr").addEventListener("click",  ontestarr);
   document.querySelector("#btn-disconnect").addEventListener("click", onDisconnect);
