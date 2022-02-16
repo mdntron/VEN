@@ -3,7 +3,7 @@
 /**
  * Example JavaScript code that interacts with the page and Web3 wallets
  */
-
+alert('00');
  // Unpkg imports
 const Web3Modal = window.Web3Modal.default;
 
