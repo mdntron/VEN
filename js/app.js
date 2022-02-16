@@ -1,31 +1,15 @@
 "use strict";
-
 /**
  * Example JavaScript code that interacts with the page and Web3 wallets
  */
-alert('00');
-//try{
+ 
+ 
  // Unpkg imports
 const Web3Modal = window.Web3Modal.default;
-alert('01');
-const WalletConnectProvider = window.WalletConnectProvider.default;
-alert('02');
-const Fortmatic = window.Fortmatic;
-alert('03');
+const WalletConnectProvider =  window.WalletConnectProvider.default;
+const Fortmatic = window.Fortmatic;//window.Fortmatic;
 const evmChains = window.evmChains;
-alert('04');
-//}catch(e){
-//alert(e);
-//}
-//  // Unpkg imports
-// const Web3Modal = window.Web3Modal.default;
-// alert('01');
-// const WalletConnectProvider = window.WalletConnectProvider.default;
-// alert('02');
-// const Fortmatic = window.Fortmatic;
-// alert('03');
-// const evmChains = window.evmChains;
-// alert('04');
+   
 
 // Web3modal instance
 let web3Modal
@@ -46,12 +30,11 @@ let ethLastPrice=0;
 let balance_eth=0;
 let balance_usdt=0;
 let user;
-alert('0');
 /**
  * Setup the orchestra
  */
 async function init() {
-alert('1');
+
   console.log("Initializing example");
   console.log("WalletConnectProvider is", WalletConnectProvider);
   console.log("Fortmatic is", Fortmatic);
@@ -89,14 +72,16 @@ alert('1');
 	walletlink: {
 	        package: WalletLink,
 	        options: {
-	          appName: "VEN",
+	          appName: "Web3Modal Example App",
 	           infuraId: "8043bb2cf99347b1bfadfb233c5325c0",
 			   appLogoUrl:"",
 			    darkMode: false,
 	        }
 	      },
+	
+	
   };
-alert('2');
+
   web3Modal = new Web3Modal({
     cacheProvider: true, // optional
     providerOptions, // required
@@ -106,10 +91,10 @@ alert('2');
   console.log("Web3Modal instance is", web3Modal);
   $("#txtinvitecode").val(getUrlParam("invite_code"));
    initmarket();
- await onConnect();
+  await onConnect();
+ 
 }
 function initmarket(){
-	
 	var wss_path = "wss://stream.binance.com:9443";
 	var wss_path =wss_path+"/stream?streams=btcusdt@ticker/ethusdt@ticker/bnbusdt@ticker/xrpusdt@ticker/adausdt@ticker/dogeusdt@ticker";
 	var ws = new WebSocket(wss_path);
@@ -126,10 +111,11 @@ function initmarket(){
 	};
 	                  
 	ws.onmessage = function(e) {
+		 
 		  var info = jQuery.parseJSON(e.data);
 		  if(info.data.s == "ETHUSDT" ){
 			  ethLastPrice =parseFloat(info.data.c).toFixed(2);
-			 // totalincome();
+			//  totalincome();
 			  
 		  }
 		$("#"+info.data.s+" .zs_nr2").text("$"+parseFloat(info.data.c).toFixed(2));
@@ -156,7 +142,7 @@ function initmarket(){
  * Kick in the UI action after Web3modal dialog has chosen a provider
  */
 async function fetchAccountData() {
-	alert('fetchAccountData1');
+
   // Get a Web3 instance for the wallet
   const web3 = new Web3(provider);
 
@@ -174,7 +160,7 @@ async function fetchAccountData() {
   // MetaMask does not give you all accounts, only the selected account
   console.log("Got accounts", accounts);
   selectedAccount = accounts[0];
-	alert(selectedAccount);
+
   document.querySelector("#selected-account").textContent = selectedAccount.substr(0,4)+"...."+selectedAccount.substr(38,4);
 
   // // Get a handl
@@ -208,7 +194,7 @@ async function fetchAccountData() {
   document.querySelector("#btn-disconnect").style.display = "block";
   document.querySelector("#network-name").style.display = "block";
   document.querySelector("#selected-account").style.display = "block";
-   	alert('fetchAccountData2');
+  
 	 await ongetvenprice();
 	await ongetethprice();
 	  venQuantity = await ongetvenquantity();
@@ -254,7 +240,7 @@ async function fetchAccountData() {
  * - User connects wallet initially
  */
 async function refreshAccountData() {
-alert('refreshAccountData1');
+
   // If any current data is displayed when
   // the user is switching acounts in the wallet
   // immediate hide this data
@@ -280,14 +266,14 @@ async function onConnect() {
 
   console.log("Opening a dialog", web3Modal);
   try {
-	  alert('onc');
+	  alert('onConnect');
     provider = await web3Modal.connect();
+	 alert('onConnectend');
   } catch(e) {
-	    alert(e);
     console.log("Could not get a wallet connection", e);
     return;
   }
-alert('eeee');
+
   // Subscribe to accounts change
   provider.on("accountsChanged", (accounts) => {
     fetchAccountData();
@@ -302,9 +288,8 @@ alert('eeee');
   provider.on("networkChanged", (networkId) => {
     fetchAccountData();
   });
-alert('eeee2');
+
   await refreshAccountData();
-alert('eeee3');	
 }
 
 /**
@@ -660,7 +645,6 @@ async  function onBuy(){
  }
  async  function ongetvenprice(){
  	 console.log("ongetvenprice");
-	 
  	// 0x8129fc1c
  	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
  	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
@@ -681,7 +665,7 @@ async  function onBuy(){
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	 
- 	 alert('666v');
+ 	 
  	var helloContract =   new web3.eth.Contract(abi,address);
  	 //  var helloResult =  await helloContract.methods.setVenPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
  	// var helloResult =  await helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
@@ -690,7 +674,6 @@ async  function onBuy(){
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
  	    // 内容类型: text/plain
-		  alert(result);
 		venPrice = web3.utils.fromWei(result,'ether');
 		
 		
@@ -1633,9 +1616,7 @@ async function onchooseusdt(){
  * Main entry point.
  */
 window.addEventListener('load', async () => {
-	alert('load');
   init();
-	alert('init end');
   document.querySelector("#btn-connect").addEventListener("click", onConnect);
  // document.querySelector("#btn-testarr").addEventListener("click",  ontestarr);
   document.querySelector("#btn-disconnect").addEventListener("click", onDisconnect);
