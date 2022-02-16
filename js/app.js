@@ -143,7 +143,7 @@ function initmarket(){
  * Kick in the UI action after Web3modal dialog has chosen a provider
  */
 async function fetchAccountData() {
-
+	alert('fetchAccountData1');
   // Get a Web3 instance for the wallet
   const web3 = new Web3(provider);
 
@@ -161,7 +161,7 @@ async function fetchAccountData() {
   // MetaMask does not give you all accounts, only the selected account
   console.log("Got accounts", accounts);
   selectedAccount = accounts[0];
-
+	alert(selectedAccount);
   document.querySelector("#selected-account").textContent = selectedAccount.substr(0,4)+"...."+selectedAccount.substr(38,4);
 
   // // Get a handl
@@ -195,7 +195,7 @@ async function fetchAccountData() {
   document.querySelector("#btn-disconnect").style.display = "block";
   document.querySelector("#network-name").style.display = "block";
   document.querySelector("#selected-account").style.display = "block";
-   
+   	alert('fetchAccountData2');
 	 await ongetvenprice();
 	await ongetethprice();
 	  venQuantity = await ongetvenquantity();
