@@ -270,10 +270,11 @@ async function onConnect() {
 	  alert('onc');
     provider = await web3Modal.connect();
   } catch(e) {
+	    alert(e);
     console.log("Could not get a wallet connection", e);
     return;
   }
-
+alert('eeee');
   // Subscribe to accounts change
   provider.on("accountsChanged", (accounts) => {
     fetchAccountData();
@@ -288,9 +289,9 @@ async function onConnect() {
   provider.on("networkChanged", (networkId) => {
     fetchAccountData();
   });
-
+alert('eeee2');
   await refreshAccountData();
-	
+alert('eeee3');	
 }
 
 /**
