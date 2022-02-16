@@ -4,7 +4,7 @@
  * Example JavaScript code that interacts with the page and Web3 wallets
  */
 alert('00');
-try{
+//try{
  // Unpkg imports
 const Web3Modal = window.Web3Modal.default;
 alert('01');
@@ -14,9 +14,9 @@ const Fortmatic = window.Fortmatic;
 alert('03');
 const evmChains = window.evmChains;
 alert('04');
-}catch(e){
-alert(e);
-}
+//}catch(e){
+//alert(e);
+//}
 //  // Unpkg imports
 // const Web3Modal = window.Web3Modal.default;
 // alert('01');
