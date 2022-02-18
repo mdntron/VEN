@@ -102,7 +102,7 @@ function initmarket(){
 	var coinimages=['btc.svg','eth.svg','bnb.svg','xrp.svg','ada.svg','doge.svg'];
 	$("#main3 a").remove();
 	for(let i =0;i<coinlist.length;i++){
-		var html = '<a href="k.html" id="'+coinlist[i]+'USDT"><div class="zs_nr"><div class="zs_nr1"><img src="images/'+coinimages[i]+'">'+coinlist[i]+'</div><div class="zs_nr2">0</div><div class="zs_nr3 green">+0.00%</div></div>';
+		var html = '<a href="k.html?c='+coinlist[i]+'" id="'+coinlist[i]+'USDT"><div class="zs_nr"><div class="zs_nr1"><img src="images/'+coinimages[i]+'">'+coinlist[i]+'</div><div class="zs_nr2">0</div><div class="zs_nr3 green">+0.00%</div></div>';
 		$("#main3").append(html);
 		
 	}
