@@ -17,15 +17,27 @@ let web3Modal
 let provider;
 
 
+
 // Address of the selected account
 let selectedAccount;
-
+let web3;
 let venPrice;
 let ethPrice;
 let venQuantity;
 let buyCoin = "ETH";
-let childs=[];
+let childs = [];
 let ethLastPrice = 0;
+let balance_eth = 0;
+let balance_usdt = 0;
+let invite_profits = 0;
+let incomes = [];
+let user;
+let contractaddress = "0x66CB8D960553f485221007ffeA33CBa4c56A9291";
+//let contractaddress = "0x710D06DbEE45231dD77A96f1e3F389664408e046";
+let usdtcontractaddress = "0x21E2475d3A89f1B10bbb55DD2d03DE9985fD0913";
+//let usdtcontractaddress = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
+//0x8129fc1c
+let currentContract;
 /**
  * Setup the orchestra
  */
@@ -35,20 +47,7 @@ async function init() {
   console.log("WalletConnectProvider is", WalletConnectProvider);
   console.log("Fortmatic is", Fortmatic);
   console.log("window.web3 is", window.web3, "window.ethereum is", window.ethereum);
-
-  // Check that the web page is run in a secure context,
-  // as otherwise MetaMask won't be available
-  // if(location.protocol !== 'https:') {
-  //   // https://ethereum.stackexchange.com/a/62217/620
-  //   const alert = document.querySelector("#alert-error-https");
-  //   alert.style.display = "block";
-  //   document.querySelector("#btn-connect").setAttribute("disabled", "disabled")
-  //   return;
-  // }
-
-  // Tell Web3modal what providers we have available.
-  // Built-in web browser provider (only one can exist as a time)
-  // like MetaMask, Brave or Opera is added automatically by Web3modal
+ 
   const providerOptions = {
     walletconnect: {
       package: WalletConnectProvider,
@@ -87,10 +86,11 @@ async function init() {
 async function fetchAccountData() {
 
   // Get a Web3 instance for the wallet
-  const web3 = new Web3(provider);
+   web3 = new Web3(provider);
 
   console.log("Web3 instance is", web3);
 
+	currentContract = new web3.eth.Contract(abi, contractaddress);
   // Get connected chain id from Ethereum node
   const chainId = await web3.eth.getChainId();
   // Load chain information over an HTTP API
@@ -103,10 +103,7 @@ async function fetchAccountData() {
   // MetaMask does not give you all accounts, only the selected account
   console.log("Got accounts", accounts);
   selectedAccount = accounts[0];
- 
-	 
   
-
 	  //getwithdrawlist();
   getchildlist();
 }
@@ -119,22 +116,9 @@ async function fetchAccountData() {
  * - User connects wallet initially
  */
 async function refreshAccountData() {
-
-  // If any current data is displayed when
-  // the user is switching acounts in the wallet
-  // immediate hide this data
-  // document.querySelector("#connected").style.display = "none";
-  // document.querySelector("#prepare").style.display = "block";
-  // document.querySelector("#btn-connect").style.display = "none";
-  // document.querySelector("#btn-disconnect").style.display = "block";
-
-  // Disable button while UI is loading.
-  // fetchAccountData() will take a while as it communicates
-  // with Ethereum node via JSON-RPC and loads chain data
-  // over an API call.
- // document.querySelector("#btn-connect").setAttribute("disabled", "disabled")
+ 
   await fetchAccountData(provider);
-  //document.querySelector("#btn-connect").removeAttribute("disabled")
+ 
 }
 
 
@@ -180,59 +164,21 @@ async function onDisconnect() {
   if(provider.close) {
     await provider.close();
 
-    // If the cached provider is not cleared,
-    // WalletConnect will default to the existing session
-    // and does not allow to re-scan the QR code with a new wallet.
-    // Depending on your use case you may want or want not his behavir.
+
     await web3Modal.clearCachedProvider();
     provider = null;
   }
 
   selectedAccount = null;
-
-  // Set the UI back to the initial state
-  // document.querySelector("#btn-connect").style.display = "block";
-  // document.querySelector("#btn-disconnect").style.display = "none";
-  
-  // document.querySelector("#network-name").style.display = "none";
-  // document.querySelector("#selected-account").style.display = "none";
+ 
 }
-  
-  
-   
+
  async  function getlen(i,fromaddress){
  	 console.log('getlen');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	 
- 	// 通过ABI和地址获取已部署的合约对象
- 	var gasprice =  web3.eth.gasPrice;
- 	var gaslimit = 3000000;
-  
  	  console.log("i:"+i+"/n fromaddress:"+fromaddress);
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  //  var helloResult =  await helloContract.methods.settingtoaddrss(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult =  await helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	   var helloResult =  await helloContract.methods.getLen(i,fromaddress).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+    var helloResult =  await currentContract.methods.getLen(i,fromaddress).call({from:selectedAccount}).then(function(result){
+ 	 
  		 console.log("get len result :"+result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		return result;
@@ -244,35 +190,15 @@ async function onDisconnect() {
  }
   
  async  function getchild(parentaddress){
-  
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
+   
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
- 	var gasprice =  web3.eth.gasPrice;
- 	var gaslimit = 3000000;
-    
- 	var helloContract =   new web3.eth.Contract(abi,address);
  	 var len = await getlen(3,parentaddress).then(function(result){
  		 return result;
  		 
  	});
  	 
  	for(let i =0 ;i<len;i++){
- 		var childaddress =    await helloContract.methods.child(parentaddress,i).call({from:selectedAccount}).then(function(result){
+ 		var childaddress =    await currentContract.methods.child(parentaddress,i).call({from:selectedAccount}).then(function(result){
  		 return result;
  		});
  		 
@@ -289,28 +215,14 @@ async function onDisconnect() {
  async  function  getchildlist(){
  	  console.log("getchildlist ok");
 	   
-	  	 
-	  const web3 = new Web3(provider);
-	   const accounts = await web3.eth.getAccounts();
-	   
-	   // MetaMask does not give you all accounts, only the selected account
-	   
-	   selectedAccount = accounts[0];
-	  // 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	  //var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
-	   var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
-	   
-	  // 通过ABI和地址获取已部署的合约对象
-	  var gasprice =  web3.eth.gasPrice;
-	  var gaslimit = 3000000;
-	    
+	  
 		childs=[];
 		await getchild(selectedAccount);
-		var helloContract =   new web3.eth.Contract(abi,address);
+		 
 		 
 		for(var i = 0 ;i<childs.length;i++){
 			
-			var helloResult =   await helloContract.methods.users(childs[i]).call({from:selectedAccount}).then(function(result){
+			var helloResult =   await currentContract.methods.users(childs[i]).call({from:selectedAccount}).then(function(result){
 			 var trHtml ="";
 			 	 trHtml = trHtml+ '<div class="mx_nr">';
 			 	 trHtml = trHtml+  ' ';
@@ -327,7 +239,6 @@ async function onDisconnect() {
 			 	 trHtml = trHtml+    '<div class="mx_nr7" style="font-size:10px"  > Parent:'+result.parent+'</div>';
 			 	 trHtml = trHtml+  '</div>';
 			 	 trHtml = trHtml+ '</div>';
-			 	 
 			 	  
 			 	 console.log(trHtml);
 			 	 $("#mian_news").append(trHtml);
@@ -357,19 +268,15 @@ window.addEventListener('load', async () => {
   init();
    
 });
-
-var usdtabi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_upgradedAddress","type":"address"}],"name":"deprecate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"deprecated","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_evilUser","type":"address"}],"name":"addBlackList","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"upgradedAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balances","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"maximumFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"_totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_maker","type":"address"}],"name":"getBlackListStatus","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowed","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"who","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newBasisPoints","type":"uint256"},{"name":"newMaxFee","type":"uint256"}],"name":"setParams","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"issue","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"redeem","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"basisPointsRate","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"isBlackListed","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_clearedUser","type":"address"}],"name":"removeBlackList","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"MAX_UINT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_blackListedUser","type":"address"}],"name":"destroyBlackFunds","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_initialSupply","type":"uint256"},{"name":"_name","type":"string"},{"name":"_symbol","type":"string"},{"name":"_decimals","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"amount","type":"uint256"}],"name":"Issue","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"amount","type":"uint256"}],"name":"Redeem","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newAddress","type":"address"}],"name":"Deprecate","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"feeBasisPoints","type":"uint256"},{"indexed":false,"name":"maxFee","type":"uint256"}],"name":"Params","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_blackListedUser","type":"address"},{"indexed":false,"name":"_balance","type":"uint256"}],"name":"DestroyedBlackFunds","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_user","type":"address"}],"name":"AddedBlackList","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_user","type":"address"}],"name":"RemovedBlackList","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[],"name":"Pause","type":"event"},{"anonymous":false,"inputs":[],"name":"Unpause","type":"event"}]
-// 合约ABI
-var abi =[
-	{
+ // 合约ABI
+var abi = [{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
 	{
 		"anonymous": false,
-		"inputs": [
-			{
+		"inputs": [{
 				"indexed": true,
 				"internalType": "address",
 				"name": "owner",
@@ -393,8 +300,7 @@ var abi =[
 	},
 	{
 		"anonymous": false,
-		"inputs": [
-			{
+		"inputs": [{
 				"indexed": true,
 				"internalType": "address",
 				"name": "previousOwner",
@@ -412,21 +318,18 @@ var abi =[
 	},
 	{
 		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
+		"inputs": [{
+			"indexed": false,
+			"internalType": "address",
+			"name": "account",
+			"type": "address"
+		}],
 		"name": "Paused",
 		"type": "event"
 	},
 	{
 		"anonymous": false,
-		"inputs": [
-			{
+		"inputs": [{
 				"indexed": true,
 				"internalType": "address",
 				"name": "from",
@@ -450,20 +353,17 @@ var abi =[
 	},
 	{
 		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
+		"inputs": [{
+			"indexed": false,
+			"internalType": "address",
+			"name": "account",
+			"type": "address"
+		}],
 		"name": "Unpaused",
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "owner",
 				"type": "address"
@@ -475,19 +375,16 @@ var abi =[
 			}
 		],
 		"name": "allowance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{
+			"internalType": "uint256",
+			"name": "",
+			"type": "uint256"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "spender",
 				"type": "address"
@@ -499,51 +396,42 @@ var abi =[
 			}
 		],
 		"name": "approve",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{
+			"internalType": "bool",
+			"name": "",
+			"type": "bool"
+		}],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
+		"inputs": [{
+			"internalType": "address",
+			"name": "account",
+			"type": "address"
+		}],
 		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{
+			"internalType": "uint256",
+			"name": "",
+			"type": "uint256"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
+		"inputs": [{
+			"internalType": "uint256",
+			"name": "amount",
+			"type": "uint256"
+		}],
 		"name": "burn",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "account",
 				"type": "address"
@@ -560,8 +448,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "string",
 				"name": "mail",
 				"type": "string"
@@ -578,8 +465,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -591,8 +477,7 @@ var abi =[
 			}
 		],
 		"name": "buy_history",
-		"outputs": [
-			{
+		"outputs": [{
 				"internalType": "string",
 				"name": "coin",
 				"type": "string"
@@ -621,14 +506,18 @@ var abi =[
 				"internalType": "bool",
 				"name": "isValue",
 				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "ethprice",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "string",
 				"name": "mail",
 				"type": "string"
@@ -650,8 +539,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -663,19 +551,16 @@ var abi =[
 			}
 		],
 		"name": "child",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
+		"outputs": [{
+			"internalType": "address",
+			"name": "",
+			"type": "address"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -687,8 +572,7 @@ var abi =[
 			}
 		],
 		"name": "commission_list",
-		"outputs": [
-			{
+		"outputs": [{
 				"internalType": "string",
 				"name": "from",
 				"type": "string"
@@ -730,19 +614,16 @@ var abi =[
 	{
 		"inputs": [],
 		"name": "decimals",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
+		"outputs": [{
+			"internalType": "uint8",
+			"name": "",
+			"type": "uint8"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "spender",
 				"type": "address"
@@ -754,19 +635,16 @@ var abi =[
 			}
 		],
 		"name": "decreaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{
+			"internalType": "bool",
+			"name": "",
+			"type": "bool"
+		}],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "uint256",
 				"name": "i",
 				"type": "uint256"
@@ -778,32 +656,27 @@ var abi =[
 			}
 		],
 		"name": "getLen",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{
+			"internalType": "uint256",
+			"name": "",
+			"type": "uint256"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "getprice",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{
+			"internalType": "uint256",
+			"name": "",
+			"type": "uint256"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "spender",
 				"type": "address"
@@ -815,13 +688,11 @@ var abi =[
 			}
 		],
 		"name": "increaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{
+			"internalType": "bool",
+			"name": "",
+			"type": "bool"
+		}],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -833,8 +704,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "to",
 				"type": "address"
@@ -853,26 +723,22 @@ var abi =[
 	{
 		"inputs": [],
 		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
+		"outputs": [{
+			"internalType": "string",
+			"name": "",
+			"type": "string"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
+		"outputs": [{
+			"internalType": "address",
+			"name": "",
+			"type": "address"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -886,13 +752,11 @@ var abi =[
 	{
 		"inputs": [],
 		"name": "paused",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{
+			"internalType": "bool",
+			"name": "",
+			"type": "bool"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -904,8 +768,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "a",
 				"type": "address"
@@ -922,65 +785,52 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
+		"inputs": [{
+			"internalType": "string",
+			"name": "",
+			"type": "string"
+		}],
 		"name": "setting",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{
+			"internalType": "uint256",
+			"name": "",
+			"type": "uint256"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
+		"inputs": [{
+			"internalType": "string",
+			"name": "",
+			"type": "string"
+		}],
 		"name": "settingaddress",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
+		"outputs": [{
+			"internalType": "address",
+			"name": "",
+			"type": "address"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
+		"inputs": [{
+			"internalType": "string",
+			"name": "",
+			"type": "string"
+		}],
 		"name": "settingstring",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
+		"outputs": [{
+			"internalType": "string",
+			"name": "",
+			"type": "string"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "string",
 				"name": "key",
 				"type": "string"
@@ -997,8 +847,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "string",
 				"name": "key",
 				"type": "string"
@@ -1015,8 +864,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "string",
 				"name": "key",
 				"type": "string"
@@ -1035,32 +883,27 @@ var abi =[
 	{
 		"inputs": [],
 		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
+		"outputs": [{
+			"internalType": "string",
+			"name": "",
+			"type": "string"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "totalSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{
+			"internalType": "uint256",
+			"name": "",
+			"type": "uint256"
+		}],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "to",
 				"type": "address"
@@ -1072,19 +915,16 @@ var abi =[
 			}
 		],
 		"name": "transfer",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{
+			"internalType": "bool",
+			"name": "",
+			"type": "bool"
+		}],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "from",
 				"type": "address"
@@ -1101,24 +941,20 @@ var abi =[
 			}
 		],
 		"name": "transferFrom",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{
+			"internalType": "bool",
+			"name": "",
+			"type": "bool"
+		}],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
+		"inputs": [{
+			"internalType": "address",
+			"name": "newOwner",
+			"type": "address"
+		}],
 		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -1132,16 +968,13 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
+		"inputs": [{
+			"internalType": "address",
+			"name": "",
+			"type": "address"
+		}],
 		"name": "users",
-		"outputs": [
-			{
+		"outputs": [{
 				"internalType": "address",
 				"name": "add",
 				"type": "address"
@@ -1176,8 +1009,7 @@ var abi =[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
+		"inputs": [{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -1189,8 +1021,7 @@ var abi =[
 			}
 		],
 		"name": "withdraw_history",
-		"outputs": [
-			{
+		"outputs": [{
 				"internalType": "string",
 				"name": "coin",
 				"type": "string"
