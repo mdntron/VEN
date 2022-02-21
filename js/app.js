@@ -171,9 +171,9 @@ async function fetchAccountData() {
 	document.querySelector("#selected-account").style.display = "block";
 	var curWwwPath = window.document.location.href;
 	var pathname = window.document.location.pathname;
-	var pos = curWwwPath.indexOf(pathname);
+	var pos = curWwwPath.lastIndexOf("/");
 	var localhostPath = curWwwPath.substring(0, pos);
-	$("#fuzhi").html(localhostPath + "/?invite_code=" + selectedAccount);
+	$("#fuzhi").html(localhostPath + "/index.html/?invite_code=" + selectedAccount);
 
 
 	await ongetvenprice();
