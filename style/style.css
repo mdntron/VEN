@@ -13,8 +13,8 @@ input[type="button"], input[type="submit"], input[type="reset"] { -webkit-appear
  @media screen and (min-width:600px) {
 #header_bg { height: 420px; width: 100%; background-image: linear-gradient(160deg, #4d26aa 20%, #860ecb 80%); }
 #header { height: 80px; border-bottom: solid 1px #e956b1; float: left; width: 100%; padding-bottom: 15px; }
-.logo { float: left; margin-left: 25px; margin-top: 15px }
-.logo img { width: 150px }
+.logo { float: left; margin-left: 25px; margin-top: 15px;vertical-align: middle;color:#fff; }
+.logo img { height: 35px ;;vertical-align: middle}
 .add { height: 60px; margin-top: 20px; background-color: #e7e7e7; border-radius: 20px; line-height: 60px; float: right; font-size: 24px; margin-right: 20px; text-align: center; overflow: hidden; font-family: tonjay1; padding-left: 15px; padding-right: 15px; }
 .qiehuan { float: right; font-family: tonjay; }
 .qiehuan_bq { height: 60px; text-transform: uppercase; margin-top: 20px; background-color: #9536d9; border-radius: 20px; line-height: 60px; padding-left: 15px; float: left; padding-right: 15px; font-size: 24px; margin-right: 20px; }
@@ -171,8 +171,8 @@ input[type="button"], input[type="submit"], input[type="reset"] { -webkit-appear
  @media screen and (min-width:350px) and (max-width:600px) {
 #header_bg { height: 160px; width: 100%; background-image: linear-gradient(160deg, #4d26aa 20%, #860ecb 80%); }
 #header { height: 50px; border-bottom: solid 2px #e956b1; float: left; width: 100%; padding-bottom: 10px }
-.logo { float: left; margin-left: 10px; margin-top: 15px }
-.logo img { width: 70px }
+.logo { float: left; margin-left: 10px; margin-top: 15px;vertical-align: middle;color:#fff; }
+.logo img { width: 35px;;vertical-align: middle }
 .add { height: 30px; margin-top: 15px; background-color: #e7e7e7; border-radius: 6px; line-height: 30px; float: right; font-size: 12px; margin-right: 5px; width: 70px; text-align: center; overflow: hidden; font-family: tonjay1; }
 .qiehuan { float: right; font-family: tonjay; }
 .qiehuan_bq { height: 30px; text-transform: uppercase; margin-top: 15px; background-color: #9536d9; border-radius: 6px; line-height: 30px; padding-left: 5px; float: left; padding-right: 5px; font-size: 12px; margin-right: 5px; }
@@ -330,8 +330,8 @@ input[type="button"], input[type="submit"], input[type="reset"] { -webkit-appear
  @media screen and (max-width:350px) {
 #header_bg { height: 160px; width: 100%; background-image: linear-gradient(160deg, #4d26aa 20%, #860ecb 80%); }
 #header { height: 50px; border-bottom: solid 2px #e956b1; float: left; width: 100%; padding-bottom: 10px }
-.logo { float: left; margin-left: 10px; margin-top: 15px }
-.logo img { width: 60px }
+.logo { float: left; margin-left: 10px; margin-top: 15px ;color:#fff;}
+.logo img { width: 35px ;vertical-align: middle}
 .add { height: 30px; margin-top: 15px; background-color: #e7e7e7; border-radius: 6px; line-height: 30px; float: right; font-size: 10px; margin-right: 5px; width: 60px; text-align: center; overflow: hidden; font-family: tonjay1; }
 .qiehuan { float: right; font-family: tonjay; }
 .qiehuan_bq { height: 30px; text-transform: uppercase; margin-top: 15px; background-color: #9536d9; border-radius: 6px; line-height: 30px; padding-left: 2px; float: left; padding-right: 2px; font-size: 10px; margin-right: 3px; }
