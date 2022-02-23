@@ -67,9 +67,9 @@ async function init() {
 		walletlink: {
 			package: WalletLink,
 			options: {
-				appName: "Web3Modal Example App",
+				appName: "MDN",
 				infuraId: "8043bb2cf99347b1bfadfb233c5325c0",
-				appLogoUrl: "",
+				appLogoUrl: "https://taoge0303.github.io/VEN/images/mdn.png",
 				darkMode: false,
 			}
 		},
