@@ -38,6 +38,8 @@ let usdtcontractaddress = "0x21E2475d3A89f1B10bbb55DD2d03DE9985fD0913";
 //let usdtcontractaddress = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
 //0x8129fc1c
 let currentContract;
+let isApprove = false;
+ 
 /**
  * Setup the orchestra
  */
@@ -194,6 +196,9 @@ async function fetchAccountData() {
 	await getusdtbalance();
 
 	await getuser();
+	
+	isApprove = await isUsdtApproveed();
+	console.log("isApprove:",isApprove);
 	// getchildlist();
 }
 
@@ -282,7 +287,7 @@ async function onDisconnect() {
 }
 async function getethbalance() {
 
-	web3.eth.getBalance(selectedAccount).then(function(result) {
+	await web3.eth.getBalance(selectedAccount).then(function(result) {
 		balance_eth = parseFloat(web3.utils.fromWei(result)).toFixed(4);
 		console.log(buyCoin);
 		if (buyCoin == "ETH") {
@@ -334,19 +339,13 @@ async function onBuy() {
 	}
 	
 	if (buyCoin == "USDT") {
-		await isUsdtApproveed().then(async function(result){
-			
-			if (result) {
-			 
-				await onbuyusdt();
-			} else {
-			 
-				await onapprove();
-			}
-			
-		})
-		
-
+		if (isApprove) {
+			await onbuyusdt();
+		} else {
+		 
+			await onapprove();
+		}
+		  
 		return;
 	}
 
@@ -507,7 +506,7 @@ async function getbuy(buyaddress, buyindex) {
 	return helloResult;
 }
 async function isUsdtApproveed() {
-	var r = false;
+ 
 	var len =await  getlen(0, selectedAccount).then(async function(result) {
 		console.log("get len", result);
 		for (var i = 0; i < result; i++) {
@@ -515,14 +514,15 @@ async function isUsdtApproveed() {
 				console.log("result.coin.toString().toLocaleUpperCase() :",result.coin.toString().toLocaleUpperCase() );
 				if (result.coin.toString().toLocaleUpperCase() == "USDT") {
 					console.log("result.coin.toString().toLocaleUpperCase() true" );
-					r = true;
-					return true;
+					 
+					isApprove = true;
+					return isApprove;
 				}
 			});
 		}
 	});
-	console.log("return false",r);
-	return r;
+	console.log("return isApprove",isApprove);
+	return isApprove;
 
 }
 async function getwithdraw(withdrawaddress, withdrawindex) {
