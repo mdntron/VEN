@@ -593,7 +593,7 @@ function totalincome() {
 		} else if (income.coin.toString().toLocaleUpperCase() == "USDT") {
 
 			amount = parseFloat(web3.utils.fromWei(income.quantity, "ether")).toFixed(4);
-		} else if (income.coin.toString().toLocaleUpperCase() == "VEN") {
+		} else if (income.coin.toString().toLocaleUpperCase() == "MDN") {
 
 			amount = parseFloat(web3.utils.fromWei(income.quantity, "ether") * venPrice).toFixed(4);
 		}

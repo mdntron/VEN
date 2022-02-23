@@ -191,7 +191,7 @@ async function ongetvenprice() {
 							}else if(result.coin.toString().toLocaleUpperCase () == "USDT"){
 								 images="usdt.svg";
 								amount = parseFloat(web3.utils.fromWei(result.quantity,"ether")).toFixed(4);
-							}else if(result.coin.toString().toLocaleUpperCase () == "VEN"){
+							}else if(result.coin.toString().toLocaleUpperCase () == "MDN"){
 								images = "ven.svg";
 								amount = parseFloat(web3.utils.fromWei(result.quantity,"ether")*venPrice).toFixed(4);
 							}
