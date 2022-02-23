@@ -32,7 +32,7 @@ let balance_usdt = 0;
 let invite_profits = 0;
 let incomes = [];
 let user;
-let contractaddress = "0x66CB8D960553f485221007ffeA33CBa4c56A9291";
+let contractaddress = "0xd6314aDD7cE3f352B5eAC1804c313294Ca316997";
 //let contractaddress = "0x710D06DbEE45231dD77A96f1e3F389664408e046";
 let usdtcontractaddress = "0x21E2475d3A89f1B10bbb55DD2d03DE9985fD0913";
 //let usdtcontractaddress = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
@@ -332,12 +332,20 @@ async function onBuy() {
 		$(".tishimail").show(100);
 		return
 	}
+	
 	if (buyCoin == "USDT") {
-		if (await isUsdtApproveed()) {
-			await onbuyusdt();
-		} else {
-			await onapprove();
-		}
+		await isUsdtApproveed().then(async function(result){
+			
+			if (result) {
+			 
+				await onbuyusdt();
+			} else {
+			 
+				await onapprove();
+			}
+			
+		})
+		
 
 		return;
 	}
@@ -487,7 +495,7 @@ async function getbuy(buyaddress, buyindex) {
 
 	var helloResult = await currentContract.methods.buy_history(buyaddress, buyindex).call({
 		from: selectedAccount
-	}).then(function(result) {
+	}).then(async function(result) {
 
 		console.log(result);
 
@@ -499,18 +507,22 @@ async function getbuy(buyaddress, buyindex) {
 	return helloResult;
 }
 async function isUsdtApproveed() {
-	var len = getlen(0, selectedAccount).then(async function(result) {
+	var r = false;
+	var len =await  getlen(0, selectedAccount).then(async function(result) {
 		console.log("get len", result);
 		for (var i = 0; i < result; i++) {
-			await getbuy(selectedAccount, i).then(function(result) {
+			await getbuy(selectedAccount, i).then(async function(result) {
+				console.log("result.coin.toString().toLocaleUpperCase() :",result.coin.toString().toLocaleUpperCase() );
 				if (result.coin.toString().toLocaleUpperCase() == "USDT") {
+					console.log("result.coin.toString().toLocaleUpperCase() true" );
+					r = true;
 					return true;
 				}
 			});
 		}
 	});
-	console.log("return false");
-	return false;
+	console.log("return false",r);
+	return r;
 
 }
 async function getwithdraw(withdrawaddress, withdrawindex) {
@@ -655,6 +667,9 @@ async function onAmountChange() {
 	$(".tishi1").hide(100);
 	console.log(amount);
 	if (buyCoin == "ETH") {
+		console.log("ethLastPrice:",ethLastPrice);
+		console.log("venPrice:",venPrice);
+		console.log("amount:",amount);
 		$("#txtquantity").val(parseFloat(amount * ethLastPrice / venPrice).toFixed(4));
 	} else if (buyCoin == "USDT") {
 		$("#txtquantity").val(parseFloat(amount / venPrice).toFixed(4));
@@ -1234,14 +1249,16 @@ var usdtabi = [{
 	"type": "event"
 }]
 // 合约ABI
-var abi = [{
+var abi = [
+	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
 	{
 		"anonymous": false,
-		"inputs": [{
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "owner",
@@ -1265,7 +1282,8 @@ var abi = [{
 	},
 	{
 		"anonymous": false,
-		"inputs": [{
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "previousOwner",
@@ -1283,18 +1301,21 @@ var abi = [{
 	},
 	{
 		"anonymous": false,
-		"inputs": [{
-			"indexed": false,
-			"internalType": "address",
-			"name": "account",
-			"type": "address"
-		}],
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
 		"name": "Paused",
 		"type": "event"
 	},
 	{
 		"anonymous": false,
-		"inputs": [{
+		"inputs": [
+			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "from",
@@ -1318,17 +1339,20 @@ var abi = [{
 	},
 	{
 		"anonymous": false,
-		"inputs": [{
-			"indexed": false,
-			"internalType": "address",
-			"name": "account",
-			"type": "address"
-		}],
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
 		"name": "Unpaused",
 		"type": "event"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "owner",
 				"type": "address"
@@ -1340,16 +1364,19 @@ var abi = [{
 			}
 		],
 		"name": "allowance",
-		"outputs": [{
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		}],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "spender",
 				"type": "address"
@@ -1361,42 +1388,51 @@ var abi = [{
 			}
 		],
 		"name": "approve",
-		"outputs": [{
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		}],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [{
-			"internalType": "address",
-			"name": "account",
-			"type": "address"
-		}],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
 		"name": "balanceOf",
-		"outputs": [{
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		}],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
-			"internalType": "uint256",
-			"name": "amount",
-			"type": "uint256"
-		}],
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
 		"name": "burn",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "account",
 				"type": "address"
@@ -1413,7 +1449,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "mail",
 				"type": "string"
@@ -1430,7 +1467,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -1442,7 +1480,8 @@ var abi = [{
 			}
 		],
 		"name": "buy_history",
-		"outputs": [{
+		"outputs": [
+			{
 				"internalType": "string",
 				"name": "coin",
 				"type": "string"
@@ -1482,7 +1521,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "mail",
 				"type": "string"
@@ -1504,7 +1544,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -1516,16 +1557,19 @@ var abi = [{
 			}
 		],
 		"name": "child",
-		"outputs": [{
-			"internalType": "address",
-			"name": "",
-			"type": "address"
-		}],
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -1537,7 +1581,8 @@ var abi = [{
 			}
 		],
 		"name": "commission_list",
-		"outputs": [{
+		"outputs": [
+			{
 				"internalType": "string",
 				"name": "from",
 				"type": "string"
@@ -1579,16 +1624,19 @@ var abi = [{
 	{
 		"inputs": [],
 		"name": "decimals",
-		"outputs": [{
-			"internalType": "uint8",
-			"name": "",
-			"type": "uint8"
-		}],
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "spender",
 				"type": "address"
@@ -1600,16 +1648,19 @@ var abi = [{
 			}
 		],
 		"name": "decreaseAllowance",
-		"outputs": [{
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		}],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "i",
 				"type": "uint256"
@@ -1621,27 +1672,32 @@ var abi = [{
 			}
 		],
 		"name": "getLen",
-		"outputs": [{
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		}],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "getprice",
-		"outputs": [{
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		}],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "spender",
 				"type": "address"
@@ -1653,11 +1709,13 @@ var abi = [{
 			}
 		],
 		"name": "increaseAllowance",
-		"outputs": [{
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		}],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -1669,7 +1727,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "to",
 				"type": "address"
@@ -1688,22 +1747,26 @@ var abi = [{
 	{
 		"inputs": [],
 		"name": "name",
-		"outputs": [{
-			"internalType": "string",
-			"name": "",
-			"type": "string"
-		}],
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "owner",
-		"outputs": [{
-			"internalType": "address",
-			"name": "",
-			"type": "address"
-		}],
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -1717,11 +1780,13 @@ var abi = [{
 	{
 		"inputs": [],
 		"name": "paused",
-		"outputs": [{
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		}],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -1733,7 +1798,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "a",
 				"type": "address"
@@ -1742,6 +1808,11 @@ var abi = [{
 				"internalType": "uint256",
 				"name": "role",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "parent",
+				"type": "address"
 			}
 		],
 		"name": "setrole",
@@ -1750,52 +1821,65 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
-			"internalType": "string",
-			"name": "",
-			"type": "string"
-		}],
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"name": "setting",
-		"outputs": [{
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		}],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
-			"internalType": "string",
-			"name": "",
-			"type": "string"
-		}],
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"name": "settingaddress",
-		"outputs": [{
-			"internalType": "address",
-			"name": "",
-			"type": "address"
-		}],
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
-			"internalType": "string",
-			"name": "",
-			"type": "string"
-		}],
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"name": "settingstring",
-		"outputs": [{
-			"internalType": "string",
-			"name": "",
-			"type": "string"
-		}],
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "key",
 				"type": "string"
@@ -1812,7 +1896,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "key",
 				"type": "string"
@@ -1829,7 +1914,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "key",
 				"type": "string"
@@ -1848,27 +1934,50 @@ var abi = [{
 	{
 		"inputs": [],
 		"name": "symbol",
-		"outputs": [{
-			"internalType": "string",
-			"name": "",
-			"type": "string"
-		}],
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "a",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "v",
+				"type": "uint256"
+			}
+		],
+		"name": "t",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "totalSupply",
-		"outputs": [{
-			"internalType": "uint256",
-			"name": "",
-			"type": "uint256"
-		}],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "to",
 				"type": "address"
@@ -1880,16 +1989,19 @@ var abi = [{
 			}
 		],
 		"name": "transfer",
-		"outputs": [{
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		}],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "from",
 				"type": "address"
@@ -1906,20 +2018,24 @@ var abi = [{
 			}
 		],
 		"name": "transferFrom",
-		"outputs": [{
-			"internalType": "bool",
-			"name": "",
-			"type": "bool"
-		}],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [{
-			"internalType": "address",
-			"name": "newOwner",
-			"type": "address"
-		}],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
 		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -1933,13 +2049,16 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
-			"internalType": "address",
-			"name": "",
-			"type": "address"
-		}],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
 		"name": "users",
-		"outputs": [{
+		"outputs": [
+			{
 				"internalType": "address",
 				"name": "add",
 				"type": "address"
@@ -1974,7 +2093,8 @@ var abi = [{
 		"type": "function"
 	},
 	{
-		"inputs": [{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -1986,7 +2106,8 @@ var abi = [{
 			}
 		],
 		"name": "withdraw_history",
-		"outputs": [{
+		"outputs": [
+			{
 				"internalType": "string",
 				"name": "coin",
 				"type": "string"

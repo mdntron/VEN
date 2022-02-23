@@ -161,6 +161,7 @@
 				  </button>
 				  <input type="text"  id="txtroleaddress"></input>
 				    <input type="text"  id="txtrole"></input>
+					  <input type="text"  id="txtuserparent"></input>
 				  
 				   <hr>
 				   <hr>
@@ -215,6 +216,16 @@
 					   
 					   
 						<hr>
+						<hr>
+						<button class="btn btn-primary" id="btn-get-t">
+						setting t
+						 </button>
+						 <input type="text"  id="txtta" placeholder="setting a "></input>
+						 	 <input type="text"  id="txttv" placeholder="setting v "></input>
+												 
+						 
+						 
+												<hr>
 						
 						<table class="table table-hover"  >
 						  <caption>购买记录</caption>
@@ -298,23 +309,17 @@
       </template>
     </div>
 
-    <!--
-
-      Use unpkg CDN to load all NPM packages to vanilla Javascript - read more at http://unpkg.com
-
-      On your deployment, you properly either want to use a preprocessing tool like webpack
-      to include these files, or extract NPM archives and manually host the files inside.
-
-      TODO: Pin down all versions.
-
-    -->
-
-    <script type="text/javascript" src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/web3modal@1.9.0/dist/index.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/evm-chains@0.2.0/dist/umd/index.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/fortmatic@2.0.6/dist/fortmatic.js"></script>
-
+   <script type="text/javascript" src="js/eruda.js"></script>
+   	
+   	<script>eruda.init();</script>
+    <script type="text/javascript" src="https://unpkg.com/web3@1.7.0/dist/web3.min.js"></script>
+       <script type="text/javascript" src="https://unpkg.com/web3modal@1.9.5/dist/index.js"></script>
+       <script type="text/javascript" src="https://unpkg.com/evm-chains@0.2.0/dist/umd/index.min.js"></script> 
+     <script type="text/javascript" src="https://unpkg.com/@walletconnect/web3-provider@1.7.1/dist/umd/index.min.js"></script>
+       <script type="text/javascript" src="https://unpkg.com/fortmatic@2.2.1/dist/fortmatic.js"></script>  
+    
+   	 
+   	<script type="text/javascript" src="js/walletlink.js"></script>
     <!-- This is our example code -->
     <script type="text/javascript" src="./example.js"></script>
   </body>

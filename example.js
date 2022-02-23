@@ -19,9 +19,24 @@ let provider;
 
 // Address of the selected account
 let selectedAccount;
-
-
-
+let web3;
+let venPrice;
+let ethPrice;
+let venQuantity;
+let buyCoin = "ETH";
+let childs = [];
+let ethLastPrice = 0;
+let balance_eth = 0;
+let balance_usdt = 0;
+let invite_profits = 0;
+let incomes = [];
+let user;
+let contractaddress = "0xd6314aDD7cE3f352B5eAC1804c313294Ca316997";
+//let contractaddress = "0x710D06DbEE45231dD77A96f1e3F389664408e046";
+let usdtcontractaddress = "0x21E2475d3A89f1B10bbb55DD2d03DE9985fD0913";
+//let usdtcontractaddress = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
+//0x8129fc1c
+let currentContract;
 /**
  * Setup the orchestra
  */
@@ -31,20 +46,7 @@ function init() {
   console.log("WalletConnectProvider is", WalletConnectProvider);
   console.log("Fortmatic is", Fortmatic);
   console.log("window.web3 is", window.web3, "window.ethereum is", window.ethereum);
-
-  // Check that the web page is run in a secure context,
-  // as otherwise MetaMask won't be available
-  // if(location.protocol !== 'https:') {
-  //   // https://ethereum.stackexchange.com/a/62217/620
-  //   const alert = document.querySelector("#alert-error-https");
-  //   alert.style.display = "block";
-  //   document.querySelector("#btn-connect").setAttribute("disabled", "disabled")
-  //   return;
-  // }
-
-  // Tell Web3modal what providers we have available.
-  // Built-in web browser provider (only one can exist as a time)
-  // like MetaMask, Brave or Opera is added automatically by Web3modal
+ 
   const providerOptions = {
     walletconnect: {
       package: WalletConnectProvider,
@@ -79,10 +81,10 @@ function init() {
 async function fetchAccountData() {
 
   // Get a Web3 instance for the wallet
-  const web3 = new Web3(provider);
+    web3 = new Web3(provider);
 
   console.log("Web3 instance is", web3);
-
+	currentContract = new web3.eth.Contract(abi, contractaddress);
   // Get connected chain id from Ethereum node
   const chainId = await web3.eth.getChainId();
   // Load chain information over an HTTP API
@@ -218,23 +220,6 @@ async function onDisconnect() {
 }
 async  function onBuy(){
 	alert('onBuy');
-	// 0x8129fc1c
-	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
-	//Proadmin 0x6CaFcb5F7c703d7BB09EEFb1996770f6271750A0
-	//transparentUpProxy 0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	 // 合约地址
-	 
-	 // 通过ABI和地址获取已部署的合约对象
-	  const web3 = new Web3(provider);
-	 const accounts = await web3.eth.getAccounts();
-	 
-	 // MetaMask does not give you all accounts, only the selected account
-	 console.log("Got accounts", accounts);
-	 selectedAccount = accounts[0];
-	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
-	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
-	// 通过ABI和地址获取已部署的合约对象
 	 
 	 let gasprice = await web3.eth.getGasPrice();
 	 
@@ -243,9 +228,9 @@ async  function onBuy(){
 	var parent =  document.querySelector("#txtbuyparent").value;
 	var amount =  document.querySelector("#txtbuyamount").value;
 	 
-	var helloContract =   new web3.eth.Contract(abi,address);
+	 
 	//  var helloResult = helloContract.methods.testmap("61@qq.com").send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
-	  var helloResult = helloContract.methods.buy(mail,parent).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei(amount)}).then(function(result){
+	  var helloResult = currentContract.methods.buy(mail,parent).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei(amount)}).then(function(result){
 	//var helloResult = helloContract.methods.getusers().call({from:selectedAccount}).then(function(result){
 	
 	    // 发送 HTTP 头部 
@@ -260,27 +245,12 @@ async  function onBuy(){
 }
 async  function onSeths(){
 	alert('onSeths');
-	// 0x8129fc1c
-	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
-	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
-	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
-	 // 合约地址
 	 
-	 // 通过ABI和地址获取已部署的合约对象
-	  const web3 = new Web3(provider);
-	 const accounts = await web3.eth.getAccounts();
-	 
-	 // MetaMask does not give you all accounts, only the selected account
-	 console.log("Got accounts", accounts);
-	 selectedAccount = accounts[0];
-	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
-	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
 	// 通过ABI和地址获取已部署的合约对象
 	var gasprice =  web3.eth.gasPrice;
 	var gaslimit = 90000;
-	var helloContract =   new web3.eth.Contract(abi,address);
-	 var helloResult = helloContract.methods.seths("set hs i love the world").send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+	 
+	 var helloResult = currentContract.methods.seths("set hs i love the world").send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
 	//var helloResult = helloContract.methods.getusers().call({from:selectedAccount}).then(function(result){
 	
@@ -296,29 +266,11 @@ async  function onSeths(){
 }
  async  function onHello(){
  	alert('onHello');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 90000;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	//  var helloResult = helloContract.methods.seths("set hs i love the world").send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	 var helloResult = helloContract.methods.hello().call({from:selectedAccount}).then(function(result){
+   var helloResult = currentContract.methods.hello().call({from:selectedAccount}).then(function(result){
  	
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
@@ -332,35 +284,15 @@ async  function onSeths(){
  }
  async  function ontestmap(){
  	alert('ontestmap');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
 	
 	var mail =  document.querySelector("#txttestmapmail").value;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	   var helloResult = helloContract.methods.testmap(mail).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	 // var helloResult = helloContract.methods.getusers().call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+  
+ 	   var helloResult = currentContract.methods.testmap(mail).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
  		 console.log(result);
  	  
  	});
@@ -370,35 +302,14 @@ async  function onSeths(){
  }
  async  function onsetvenprice(){
  	alert('onsetvenprice');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
+  
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
 	var price =  document.querySelector("#txtvenprice").value;
 	 
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	   var helloResult = helloContract.methods.setVenPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	//  var helloResult = helloContract.methods.getusers().call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 
+ 	   var helloResult = currentContract.methods.setVenPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+  
  		 console.log(result);
  	  
  	});
@@ -408,34 +319,13 @@ async  function onSeths(){
  }
  async  function onsetethprice(){
  	alert('onsetethprice');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
 	var price =  document.querySelector("#txtethprice").value;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	 var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	 //  var helloResult = helloContract.methods.getusers().call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 	 
+ 	 var helloResult = currentContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
  		 console.log(result);
  	  
  	});
@@ -445,37 +335,15 @@ async  function onSeths(){
  }
  async  function ongetvenprice(){
  	alert('ongetvenprice');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var price =  document.querySelector("#txtvenprice").value;
+   var helloResult = currentContract.methods.getprice().call({from:selectedAccount}).then(function(result){
  	 
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	 //  var helloResult = helloContract.methods.setVenPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	  var helloResult = helloContract.methods.getprice().call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
  		 console.log(result);
 		  alert(web3.utils.fromWei(result));
+		  	 console.log(web3.utils.fromWei(result));
  	  
  	});
  	
@@ -484,34 +352,13 @@ async  function onSeths(){
  }
  async  function ongetethprice(){
  	alert('ongetethprice');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var price =  document.querySelector("#txtethprice").value;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	// var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.price_eth_usdt().call({from:selectedAccount}).then(function(result){
+ 	   var helloResult = currentContract.methods.price_eth_usdt().call({from:selectedAccount}).then(function(result){
  	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 	    
  		 console.log(result);
 		 alert(result);
  	  
@@ -522,34 +369,13 @@ async  function onSeths(){
  }
  async  function ongetquantity(){
  	alert('ongetquantity');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var value =  document.querySelector("#txtvalue").value;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	// var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.getquantity(web3.utils.toWei(value)).call({from:selectedAccount}).then(function(result){
+   var helloResult = currentContract.methods.getquantity(web3.utils.toWei(value)).call({from:selectedAccount}).then(function(result){
  	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 	   
  		 console.log(result);
 		 console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -561,28 +387,12 @@ async  function onSeths(){
  }
  async  function ontestarr(){
  	alert('ontestarr');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	 var value =  document.querySelector("#testarr").value;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	 var helloResult = helloContract.methods.testarr(value).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 
+ 	 var helloResult = currentContract.methods.testarr(value).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
  	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
  	 //    var helloResult = helloContract.methods.getquantity(web3.utils.toWei(value)).call({from:selectedAccount}).then(function(result){
  	
@@ -600,31 +410,14 @@ async  function onSeths(){
  }
  async  function onbuyhistory(){
  	alert('onbuyhistory');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
  	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var buyaddress =  document.querySelector("#buy_historyaddress").value;
 	var buyindex =  document.querySelector("#buy_historyvalue").value;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	// var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.buy_history(buyaddress,buyindex).call({from:selectedAccount}).then(function(result){
+   var helloResult = currentContract.methods.buy_history(buyaddress,buyindex).call({from:selectedAccount}).then(function(result){
  	
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
@@ -640,30 +433,12 @@ async  function onSeths(){
  }
  async  function getbuy(buyaddress,buyindex){
  	console.log('getbuy');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	 
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	// var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.buy_history(buyaddress,buyindex).call({from:selectedAccount}).then(function(result){
+ 	 var helloResult = currentContract.methods.buy_history(buyaddress,buyindex).call({from:selectedAccount}).then(function(result){
  	
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
@@ -679,33 +454,12 @@ async  function onSeths(){
  }
  async  function onwithdrawhistory(){
  	alert('onwithdrawhistory');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
+  
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var withdrawaddress =  document.querySelector("#withdraw_historyaddress").value;
 	var withdrawindex =  document.querySelector("#withdraw_historyvalue").value;
-	alert(withdrawaddress);
-	alert(withdrawindex);
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	// var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.withdraw_history(withdrawaddress,withdrawindex).call({from:selectedAccount}).then(function(result){
+  var helloResult = currentContract.methods.withdraw_history(withdrawaddress,withdrawindex).call({from:selectedAccount}).then(function(result){
  	
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
@@ -720,36 +474,15 @@ async  function onSeths(){
  }
  async  function getwithdraw(withdrawaddress,withdrawindex){
  	 console.log('getwithdraw');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	 
  	 console.log(withdrawaddress);
  	 console.log(withdrawindex);
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	// var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.withdraw_history(withdrawaddress,withdrawindex).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+   var helloResult = currentContract.methods.withdraw_history(withdrawaddress,withdrawindex).call({from:selectedAccount}).then(function(result){
+ 	 
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 return result;
@@ -762,34 +495,14 @@ async  function onSeths(){
  
  async  function onusers(){
  	alert('onusers');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var value =  document.querySelector("#txtusers").value;
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	// var helloResult = helloContract.methods.setEthPriceUsdt(web3.utils.toWei(price)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.users(value).call({from:selectedAccount}).then(function(result){
+    var helloResult = currentContract.methods.users(value).call({from:selectedAccount}).then(function(result){
  	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 	   
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -801,37 +514,16 @@ async  function onSeths(){
  }
  async  function onrole(){
  	alert('onrole');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var roleaddress =  document.querySelector("#txtroleaddress").value;
 	var role =  document.querySelector("#txtrole").value;
-	alert(address);
-	alert(role);
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  var helloResult = helloContract.methods.setrole(roleaddress,role).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	//     var helloResult = helloContract.methods.users(value).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+	var parent =  document.querySelector("#txtuserparent").value;
+ 
+ 	 var helloResult = currentContract.methods.setrole(roleaddress,role,parent).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -843,22 +535,7 @@ async  function onSeths(){
  }
  async  function onchild(){
  	alert('onchild');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
@@ -866,15 +543,9 @@ async  function onSeths(){
 	var indexchild =  document.querySelector("#txtindexchild").value;
  	 alert(parentaddress);
 	 alert(indexchild);
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	//  var helloResult = helloContract.methods.child(parentaddress,role).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	     var helloResult = helloContract.methods.child(parentaddress,indexchild).call({from:selectedAccount}).then(function(result){
+    var helloResult = currentContract.methods.child(parentaddress,indexchild).call({from:selectedAccount}).then(function(result){
  	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 	   
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -884,38 +555,22 @@ async  function onSeths(){
  	
  	 console.log("contract ok");
  }
- var childs=[];
+ 
  
  async  function getchild(parentaddress){
   
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	// 通过ABI和地址获取已部署的合约对象
+  
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
     
- 	var helloContract =   new web3.eth.Contract(abi,address);
+ 	 
 	 var len = await getlen(3,parentaddress).then(function(result){
 		 return result;
 		 
 	});
 	 
 	for(let i =0 ;i<len;i++){
-		var childaddress = await helloContract.methods.child(parentaddress,i).call({from:selectedAccount}).then(function(result){
+		var childaddress = await currentContract.methods.child(parentaddress,i).call({from:selectedAccount}).then(function(result){
 		 return result;
 		});
 		 
@@ -931,25 +586,7 @@ async  function onSeths(){
  }
  async  function onapprove(){
  	alert('onapprove');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
-	//var usdtcontractaddress = "0x21E2475d3A89f1B10bbb55DD2d03DE9985fD0913";
-	var usdtcontractaddress = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
- 	// 通过ABI和地址获取已部署的合约对象
+  
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var approveaddress =  document.querySelector("#txtapproveaddress").value;
@@ -959,12 +596,7 @@ async  function onSeths(){
   
  	var helloContract =   new web3.eth.Contract(usdtabi,usdtcontractaddress);
  	  var helloResult = helloContract.methods.approve(approveaddress,web3.utils.toWei(approvevalue)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	  //   var helloResult = helloContract.methods.approve(parentaddress,approvevalue).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+   
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -976,25 +608,7 @@ async  function onSeths(){
  }
  async  function onbuyusdt(){
  	alert('onbuyusdt');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 //1000000000
-	 //3000000
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
  	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	//var usdtcontractaddress = "0x21E2475d3A89f1B10bbb55DD2d03DE9985fD0913";
-	var usdtcontractaddress = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
@@ -1005,11 +619,9 @@ async  function onSeths(){
  	 console.log(parentaddress);
  	 console.log(usdtamount);
 	console.log(web3.utils.toWei(usdtamount));
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  var helloResult = helloContract.methods.buyuseusdt(usdtmail,parentaddress,web3.utils.toWei(usdtamount)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	  //   var helloResult = helloContract.methods.approve(parentaddress,approvevalue).call({from:selectedAccount}).then(function(result){
- 	
+ 
+ 	  var helloResult = currentContract.methods.buyuseusdt(usdtmail,parentaddress,web3.utils.toWei(usdtamount)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
  	    // 内容类型: text/plain
@@ -1024,24 +636,7 @@ async  function onSeths(){
  }
  async  function onsetting(){
  	alert('onsetting');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	 
- 	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var txtsettingkey =  document.querySelector("#txtsettingkey").value;
@@ -1049,16 +644,11 @@ async  function onSeths(){
  	 
  	console.log(txtsettingkey);
  	 console.log(txtsettingvalue);
- 	  
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  var helloResult = helloContract.methods.settinguint(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	  //   var helloResult = helloContract.methods.approve(parentaddress,approvevalue).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+	if(txtsettingkey == "price_eth_usdt"){
+  	  txtsettingvalue = web3.utils.toWei(txtsettingvalue);
+  	  }
+ 	  var helloResult = currentContract.methods.settinguint(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -1071,24 +661,7 @@ async  function onSeths(){
  
  async  function onsettingstr(){
  	alert('onsettingstr');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
- 	 
- 	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var txtsettingkey =  document.querySelector("#txtsettingstringkey").value;
@@ -1096,16 +669,9 @@ async  function onSeths(){
  	 
  	
  	 console.log(txtsettingvalue);
- 	  
   
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  var helloResult = helloContract.methods.settingtostring(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	  //   var helloResult = helloContract.methods.approve(parentaddress,approvevalue).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 	  var helloResult = currentContract.methods.settingtostring(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -1118,24 +684,7 @@ async  function onSeths(){
  
  async  function onsettingaddress(){
  	alert('onsettingaddress');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	 
-	
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
@@ -1145,15 +694,9 @@ async  function onSeths(){
  	
  	 console.log(txtsettingvalue);
  	  
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  var helloResult = helloContract.methods.settingtoaddrss(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	  //   var helloResult = helloContract.methods.approve(parentaddress,approvevalue).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+   
+ 	  var helloResult = currentContract.methods.settingtoaddrss(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -1165,42 +708,21 @@ async  function onSeths(){
  }
  async  function ongetsetting(){
  	alert('ongetsetting');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	 
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var txtsettingkey =  document.querySelector("#txtgetsettingkey").value;
- 
- 	 
- 	
- 	 console.log(txtsettingkey);
- 	  
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	 // var helloResult = helloContract.methods.setting(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	    var helloResult = helloContract.methods.setting(txtsettingkey).call({from:selectedAccount}).then(function(result){
+
+ 	 var helloResult = currentContract.methods.setting(txtsettingkey).call({from:selectedAccount}).then(function(result){
  	
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
  	    // 内容类型: text/plain
  		 console.log(result);
+		 if(txtsettingkey == "price_eth_usdt"){
+			  console.log(web3.utils.fromWei(result,"ether"));
+		 }
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
  	  
@@ -1212,22 +734,7 @@ async  function onSeths(){
  
  async  function ongetsettingstr(){
  	alert('ongetsettingstr');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
  	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	 
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
@@ -1236,12 +743,7 @@ async  function onSeths(){
  	 
  	
  	 console.log(txtgetsettingkey);
- 	  
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	 //  var helloResult = helloContract.methods.settingtostring(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	      var helloResult = helloContract.methods.settingstring(txtgetsettingkey).call({from:selectedAccount}).then(function(result){
+ 	  var helloResult = currentContract.methods.settingstring(txtgetsettingkey).call({from:selectedAccount}).then(function(result){
  	
  	    // 发送 HTTP 头部 
  	    // HTTP 状态值: 200 : OK
@@ -1258,41 +760,14 @@ async  function onSeths(){
  
  async  function ongetsettingaddress(){
  	alert('ongetsettingaddress');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 console.log("Got accounts", accounts);
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
+  
  	 
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
  	var txtgetsettingkey =  document.querySelector("#txtgetsettingaddresskey").value;
+ 	  var helloResult = currentContract.methods.settingaddress(txtgetsettingkey).call({from:selectedAccount}).then(function(result){
  	 
- 	 
- 	
- 	 console.log(txtsettingvalue);
- 	  
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  //  var helloResult = helloContract.methods.settingtoaddrss(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	   var helloResult = helloContract.methods.settingaddress(txtgetsettingkey).call({from:selectedAccount}).then(function(result){
- 	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
  		 console.log(result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		 alert(result);
@@ -1304,37 +779,15 @@ async  function onSeths(){
  }
  async  function getlen(i,fromaddress){
  	 console.log('getlen');
- 	// 0x8129fc1c
- 	//0xe5Bbfe84F8dfFf8011d037A3bcECeDcb6a31768B  ven
- 	//Proadmin 0xe87011C5408F9E6d83F50DFFAc6d220F5d306F2e
- 	//transparentUpProxy 0x8d5eb9eA6320257f80B07eA3273567a342c40fc5
- 	 // 合约地址
- 	 
- 	 // 通过ABI和地址获取已部署的合约对象
- 	  const web3 = new Web3(provider);
- 	 const accounts = await web3.eth.getAccounts();
- 	 
- 	 // MetaMask does not give you all accounts, only the selected account
- 	 
- 	 selectedAccount = accounts[0];
- 	// 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
- 	//var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
- 	 var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
  	 
  	// 通过ABI和地址获取已部署的合约对象
  	var gasprice =  web3.eth.gasPrice;
  	var gaslimit = 3000000;
   
  	  console.log("i:"+i+"/n fromaddress:"+fromaddress);
-  
- 	var helloContract =   new web3.eth.Contract(abi,address);
- 	  //  var helloResult = helloContract.methods.settingtoaddrss(txtsettingkey,txtsettingvalue).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
- 	// var helloResult = helloContract.methods.buy("6144@qq.com",'0x23AfD6a2Ebd5B3A86ec471916f63E495f01574FF').send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit,value:web3.utils.toWei("0.002")}).then(function(result){
- 	   var helloResult = helloContract.methods.getLen(i,fromaddress).call({from:selectedAccount}).then(function(result){
+  var helloResult = currentContract.methods.getLen(i,fromaddress).call({from:selectedAccount}).then(function(result){
  	
- 	    // 发送 HTTP 头部 
- 	    // HTTP 状态值: 200 : OK
- 	    // 内容类型: text/plain
+ 	  
  		 console.log("get len result :"+result);
  		 // console.log(web3.utils.fromWei(result,"ether"));
  		return result;
@@ -1349,19 +802,7 @@ async  function onSeths(){
  // childlist
  async  function  getbuylist(){
 	  console.log("getbuylist ok");
-	  const web3 = new Web3(provider);
-	   const accounts = await web3.eth.getAccounts();
-	   
-	   // MetaMask does not give you all accounts, only the selected account
-	   
-	   selectedAccount = accounts[0];
-	  // 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	  //var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
-	   var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
-	   
-	  // 通过ABI和地址获取已部署的合约对象
-	  var gasprice =  web3.eth.gasPrice;
-	  var gaslimit = 3000000;
+	 
 	    var buylist =  document.querySelector("#buylist");
 		 while(buylist.hasChildNodes()){
 		        buylist.removeChild(buylist.lastChild)
@@ -1398,20 +839,7 @@ async  function onSeths(){
  }
  async  function  getwithdrawlist(){
  	  console.log("getwithdrawlist ok");
-	 
-	  const web3 = new Web3(provider);
-	   const accounts = await web3.eth.getAccounts();
-	   
-	   // MetaMask does not give you all accounts, only the selected account
-	   
-	   selectedAccount = accounts[0];
-	  // 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	  //var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
-	   var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
-	   
-	  // 通过ABI和地址获取已部署的合约对象
-	  var gasprice =  web3.eth.gasPrice;
-	  var gaslimit = 3000000;
+	  
 	  var withdrawlist =  document.querySelector("#withdrawlist");
 	  
 		while(withdrawlist.hasChildNodes()){
@@ -1450,31 +878,18 @@ async  function onSeths(){
  async  function  getchildlist(){
  	  console.log("getchildlist ok");
 	   
-	  	 
-	  const web3 = new Web3(provider);
-	   const accounts = await web3.eth.getAccounts();
-	   
-	   // MetaMask does not give you all accounts, only the selected account
-	   
-	   selectedAccount = accounts[0];
-	  // 合约地址0xa74df585a4c5371925c23C9f972EBe8EC1A8F515
-	  //var address = "0xa74df585a4c5371925c23C9f972EBe8EC1A8F515";
-	   var address =     "0x710D06DbEE45231dD77A96f1e3F389664408e046";
-	   
-	  // 通过ABI和地址获取已部署的合约对象
-	  var gasprice =  web3.eth.gasPrice;
-	  var gaslimit = 3000000;
+	 
 	    var childlist =  document.querySelector("#childlist");
 		while(childlist.hasChildNodes()){
 				   childlist.removeChild(childlist.lastChild)
 		}
 		childs=[];
 		await getchild(selectedAccount);
-		var helloContract =   new web3.eth.Contract(abi,address);
+		 
 		 
 		for(var i = 0 ;i<childs.length;i++){
 			
-			var helloResult =  helloContract.methods.users(childs[i]).call({from:selectedAccount}).then(function(result){
+			var helloResult =  currentContract.methods.users(childs[i]).call({from:selectedAccount}).then(function(result){
 				// <tr>
 				//   <th>地址</th>
 				//   <th>上级</th>
@@ -1500,6 +915,33 @@ async  function onSeths(){
 		}
 	  			
 	  
+ }
+ 
+ async  function ongett(){
+ 	alert('ongett');
+ 	 
+ 	 
+ 	// 通过ABI和地址获取已部署的合约对象
+ 	var gasprice =  web3.eth.gasPrice;
+ 	var gaslimit = 3000000;
+ 	var txtta =  document.querySelector("#txtta").value;  
+ 	 var txttv =  document.querySelector("#txttv").value; 
+ 	
+ 	 console.log(txtgetsettingkey);
+ 	  
+ 	  var helloResult = currentContract.methods.t(txtta,web3.utils.toWei(txttv)).send({from:selectedAccount,gasPrice:gasprice,gas:gaslimit}).then(function(result){
+ 	 
+ 	    // 发送 HTTP 头部 
+ 	    // HTTP 状态值: 200 : OK
+ 	    // 内容类型: text/plain
+ 		 console.log(result);
+ 		 // console.log(web3.utils.fromWei(result,"ether"));
+ 		 alert(result);
+ 	  
+ 	});
+ 	
+ 	
+ 	 console.log("contract ok");
  }
   
  
@@ -1546,7 +988,7 @@ window.addEventListener('load', async () => {
 document.querySelector("#btn-get-setting").addEventListener("click",   ongetsetting);
 document.querySelector("#btn-get-settingstr").addEventListener("click",   ongetsettingstr);
 document.querySelector("#btn-get-settingaddress").addEventListener("click",   ongetsettingaddress);
-   
+  document.querySelector("#btn-get-t").addEventListener("click",   ongett); 
   
 });
 
@@ -1813,6 +1255,11 @@ var abi =[
 				"internalType": "bool",
 				"name": "isValue",
 				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "ethprice",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -2106,6 +1553,11 @@ var abi =[
 				"internalType": "uint256",
 				"name": "role",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "parent",
+				"type": "address"
 			}
 		],
 		"name": "setrole",
@@ -2235,6 +1687,24 @@ var abi =[
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "a",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "v",
+				"type": "uint256"
+			}
+		],
+		"name": "t",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -2406,6 +1876,11 @@ var abi =[
 				"internalType": "uint256",
 				"name": "wtype",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "fromchild",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
