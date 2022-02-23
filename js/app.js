@@ -352,7 +352,8 @@ async function onBuy() {
 
 	let gasprice = await web3.eth.getGasPrice();
 
-	var gaslimit = 3000000;
+	var gaslimit = 100000;
+	console.log("gasprice",gasprice);
 	console.log(amount);
 	var helloContract = new web3.eth.Contract(abi, contractaddress);
 	var helloResult = await helloContract.methods.buy(mail, code).send({
@@ -377,7 +378,7 @@ async function onapprove() {
 	console.log('onapprove');
 
 	var gasprice = web3.eth.gasPrice;
-	var gaslimit = 3000000;
+	var gaslimit = 100000;
 
 	var approvevalue = "10000000";
 
@@ -399,7 +400,7 @@ async function onbuyusdt() {
 	console.log('onbuyusdt');
 
 	var gasprice = web3.eth.gasPrice;
-	var gaslimit = 3000000;
+	var gaslimit = 100000;
 	var mail = document.querySelector("#txtmail").value;
 	var parent = document.querySelector("#txtinvitecode").value;
 	var amount = document.querySelector("#txtamount").value;
