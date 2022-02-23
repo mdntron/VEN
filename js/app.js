@@ -35,14 +35,12 @@ let user;
 //let contractaddress = "0xd6314aDD7cE3f352B5eAC1804c313294Ca316997";
 //let contractaddress = "0x710D06DbEE45231dD77A96f1e3F389664408e046";
 let contractaddress = "0x07FA92050eDB387FE26E77859c9a5AdF107Cd72e";
-
 //let usdtcontractaddress = "0x21E2475d3A89f1B10bbb55DD2d03DE9985fD0913";
 //let usdtcontractaddress = "0x337610d27c682e347c9cd60bd4b3b107c9d34ddd";
 let usdtcontractaddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 //0x8129fc1c
 let currentContract;
 let isApprove = false;
-
 /**
  * Setup the orchestra
  */
